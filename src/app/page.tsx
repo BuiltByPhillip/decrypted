@@ -1,47 +1,83 @@
+"use client";
+
 import Link from "next/link";
+import CodeMirror from "@uiw/react-codemirror";
+import { json } from "@codemirror/lang-json";
+import { EditorView } from "@codemirror/view";
+import { linter, lintGutter } from "@codemirror/lint";
+import { useState } from "react";
 
-import { api, HydrateClient } from "~/trpc/server";
+export default function Home() {
+  const [code, setCode] = useState("");
 
-export default async function Home() {
+  const jsonLinter = linter((view) => {
+    const diagnostics: any[] = [];
+    try {
+      JSON.parse(view.state.doc.toString());
+    } catch (e: any) {
+      const match = e.message.match(/at position (\d+)/);
+      if (match) {
+        const pos = parseInt(match[1]);
+        diagnostics.push({
+          from: pos,
+          to: pos,
+          severity: "error",
+          message: e.message,
+        });
+      }
+    }
+    return diagnostics;
+  });
+
+  const darkTheme = EditorView.theme({
+    "&": {
+      backgroundColor: "#DFD0B8",
+      color: "#222831",
+    },
+    ".cm-content": {
+      padding: "16px",
+      caretColor: "#222831",
+    },
+    ".cm-focused": {
+      outline: "none",
+    },
+    ".cm-editor": {
+      borderRadius: "1rem",
+    },
+    ".cm-scroller": {
+      fontFamily: "ui-monospace, SFMono-Regular, monospace",
+    },
+    ".cm-placeholder": {
+      color: "#948979",
+    },
+    // JSON syntax highlighting
+    ".cm-string": { color: "#628141" },
+    ".cm-number": { color: "#393E46" },
+    ".cm-atom": { color: "#393E46" },
+    ".cm-keyword": { color: "#222831", fontWeight: "bold" },
+    ".cm-property": { color: "#222831" },
+    ".cm-punctuation": { color: "#948979" },
+    // Error styling
+    ".cm-diagnostic": {
+      textDecoration: "underline wavy red",
+    },
+    ".cm-lintRange-error": {
+      backgroundColor: "rgba(255, 0, 0, 0.1)",
+    },
+  });
 
   return (
-    <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              Welcome to Decrypted!
-            </p>
-          </div>
-        </div>
-      </main>
-    </HydrateClient>
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-medium to-dark text-cream">
+      <div className="w-200 h-64 rounded-2xl overflow-hidden">
+        <CodeMirror
+          height="256px"
+          value={code}
+          onChange={setCode}
+          extensions={[json(), jsonLinter, lintGutter(), darkTheme]}
+          placeholder="Enter your JSON here..."
+          className="h-full"
+        />
+      </div>
+    </main>
   );
 }
