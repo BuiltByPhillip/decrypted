@@ -68,9 +68,9 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-medium to-dark text-cream">
-      <div className="w-200 h-64 rounded-2xl overflow-hidden">
+      <div className="w-200 h-128 rounded-2xl overflow-hidden">
         <CodeMirror
-          height="256px"
+          height="518px"
           value={code}
           onChange={setCode}
           extensions={[json(), jsonLinter, lintGutter(), darkTheme]}
