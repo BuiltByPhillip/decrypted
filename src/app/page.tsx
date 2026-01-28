@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import { EditorView } from "@codemirror/view";
@@ -10,19 +9,27 @@ import { useState } from "react";
 export default function Home() {
   const [code, setCode] = useState("");
 
+  const generateCode = () => {
+    let userCode = JSON.parse(code);
+
+    // Reset code inside the input field
+    setCode("");
+  }
+
   const jsonLinter = linter((view) => {
-    const diagnostics: any[] = [];
+    const diagnostics: { from: number; to: number; severity: "error"; message: string }[] = [];
     try {
       JSON.parse(view.state.doc.toString());
-    } catch (e: any) {
-      const match = e.message.match(/at position (\d+)/);
+    } catch (e: unknown) {
+      const error = e as Error;
+      const match = /at position (\d+)/.exec(error.message);
       if (match) {
-        const pos = parseInt(match[1]);
+        const pos = parseInt(match[1], 10);
         diagnostics.push({
           from: pos,
           to: pos,
           severity: "error",
-          message: e.message,
+          message: error.message,
         });
       }
     }
@@ -79,7 +86,7 @@ export default function Home() {
             className="h-full"
           />
         </div>
-        <button className="bg-cream rounded-md text-medium px-3 py-1 hover:opacity-70 hover:cursor-pointer mt-10">
+        <button className="bg-cream rounded-md text-medium px-3 py-1 hover:opacity-70 hover:cursor-pointer mt-10" onClick={() => generateCode()}>
           Generate Code
         </button>
       </div>
