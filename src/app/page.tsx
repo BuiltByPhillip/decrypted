@@ -68,15 +68,20 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-medium to-dark text-cream">
-      <div className="w-200 h-128 rounded-2xl overflow-hidden">
-        <CodeMirror
-          height="518px"
-          value={code}
-          onChange={setCode}
-          extensions={[json(), jsonLinter, lintGutter(), darkTheme]}
-          placeholder="Enter your JSON here..."
-          className="h-full"
-        />
+      <div className="flex flex-col items-center">
+        <div className="w-200 h-128 rounded-2xl overflow-hidden">
+          <CodeMirror
+            height="518px"
+            value={code}
+            onChange={setCode}
+            extensions={[json(), jsonLinter, lintGutter(), darkTheme]}
+            placeholder="Enter your JSON here..."
+            className="h-full"
+          />
+        </div>
+        <button className="bg-cream rounded-md text-medium px-3 py-1 hover:opacity-70 hover:cursor-pointer mt-10">
+          Generate Code
+        </button>
       </div>
     </main>
   );
