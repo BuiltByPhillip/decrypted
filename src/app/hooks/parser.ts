@@ -179,7 +179,7 @@ function exerciseParse(lines: string[], startIndex: number): [Exercise, number] 
       // TODO: Parse options into expression
     }
     else {
-      throw new Error(`Line ${i} - Unexpected string: '${line}'`);
+      return [finalizeExercise(pendingExercise, startIndex), i]
     }
     i++
   }
