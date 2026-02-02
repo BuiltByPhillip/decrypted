@@ -71,6 +71,7 @@ function parse(input: string, startIndex: number): Code {
       const [step, nextI] = stepParse(lines, i);
       i = nextI
       code.step.push(step)
+      continue
     }
     else {
       throw new Error(`Line ${i} - Unexpected string: '${line}'`);
@@ -141,6 +142,7 @@ function exerciseParse(lines: string[], startIndex: number): [Exercise, number] 
     }
     else if (line.startsWith("palette:")) {
       line.replace("palette:", "").trim()
+      pendingExercise.palette = [] // Temp
       // TODO: Parse palette into list of expressions
     }
     else if (line.startsWith("options:")) {
@@ -150,8 +152,10 @@ function exerciseParse(lines: string[], startIndex: number): [Exercise, number] 
         throw new Error(`Line ${i} - No options for exercise type select`);
       }
       pendingExercise.options = options;
+      continue
     }
     else if (line.startsWith("answer:")) {
+      pendingExercise.answer = [] // Temp
       // TODO: Parse options into expression
     }
     else {
