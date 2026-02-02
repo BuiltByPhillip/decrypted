@@ -33,6 +33,11 @@ type Expr =
   | { kind: "greater"; left: Expr; right: Expr }
   | { kind: "equal"; left: Expr; right: Expr }
 
+type PaletteItem =
+  | { kind: "var"; name: string }
+  | { kind: "int"; value: number }
+  | { kind: "operator"; op: "pow" | "mod" | "less" | "greater" | "equal" };
+
 const EXERCISE_TYPES = [
   "construct",
   "fill",
@@ -42,7 +47,7 @@ const EXERCISE_TYPES = [
 
 type ExerciseType = typeof EXERCISE_TYPES[number];
 
-function parseExpr(input: string): Expr {
+function evaluate(input: string): Expr {
   const s = input.trim();
 
   // Integer
@@ -161,9 +166,9 @@ function exerciseParse(lines: string[], startIndex: number): [Exercise, number] 
       pendingExercise.hint = line.replace("hint:", "").trim()
     }
     else if (line.startsWith("palette:")) {
-      line.replace("palette:", "").trim()
-      pendingExercise.palette = [] // Temp
-      // TODO: Parse palette into list of expressions
+      pendingExercise.palette = line.replace("palette:", "").trim()
+        .split(",")
+        .map(p => evaluate(p.trim()))
     }
     else if (line.startsWith("options:")) {
       const [options, nextI] = optionsParse(lines, i+1)
