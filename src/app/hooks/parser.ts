@@ -42,7 +42,24 @@ const EXERCISE_TYPES = [
 
 type ExerciseType = typeof EXERCISE_TYPES[number];
 
-function parse(input: string, startIndex: number): Code {
+function parseExpr(input: string): Expr {
+  const s = input.trim();
+
+  // Integer
+  if (/^\d+$/.test(s)) {
+    return { kind: "int", value: Number(s) };
+  }
+
+  // Variable (including $1, a, p, etc.)
+  if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(s)) {
+    return { kind: "var", name: s };
+  }
+
+  // Expression is invalid and not currently supported
+  throw new Error(`Invalid expression: '${input}'`);
+}
+
+export function parse(input: string, startIndex: number): Code {
   const lines: string[] = input.split("\n");
   let code: Code = {
     information: { name: "", participants: []},
@@ -68,10 +85,13 @@ function parse(input: string, startIndex: number): Code {
           .map(p => p.trim())
     }
     else if (line.startsWith("step")) {
-      const [step, nextI] = stepParse(lines, i);
+      const [step, nextI] = stepParse(lines, i + 1);
       i = nextI
       code.step.push(step)
       continue
+    }
+    else if (line.trim() === "") {
+      // Empty line
     }
     else {
       throw new Error(`Line ${i} - Unexpected string: '${line}'`);

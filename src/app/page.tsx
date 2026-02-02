@@ -1,41 +1,20 @@
 "use client";
 
 import CodeMirror from "@uiw/react-codemirror";
-import { json } from "@codemirror/lang-json";
 import { EditorView } from "@codemirror/view";
-import { linter, lintGutter } from "@codemirror/lint";
 import { useState } from "react";
+import { parse } from "~/app/hooks/parser"
 
 export default function Home() {
   const [code, setCode] = useState("");
 
   const generateCode = () => {
-    let userCode = JSON.parse(code);
+    let userCode = parse(code, 0);
+    console.log(userCode);
 
     // Reset code inside the input field
     setCode("");
   }
-
-  const jsonLinter = linter((view) => {
-    const diagnostics: { from: number; to: number; severity: "error"; message: string }[] = [];
-    try {
-      JSON.parse(view.state.doc.toString());
-    } catch (e: unknown) {
-      const error = e as Error;
-      const match = /at position (\d+)/.exec(error.message);
-      if (match) {
-        const pos = parseInt(match[1], 10);
-        diagnostics.push({
-          from: pos,
-          to: pos,
-          severity: "error",
-          message: error.message,
-        });
-      }
-    }
-    return diagnostics;
-  });
-
   const darkTheme = EditorView.theme({
     "&": {
       backgroundColor: "#DFD0B8",
@@ -81,8 +60,8 @@ export default function Home() {
             height="518px"
             value={code}
             onChange={setCode}
-            extensions={[json(), jsonLinter, lintGutter(), darkTheme]}
-            placeholder="Enter your JSON here..."
+            extensions={[darkTheme]}
+            placeholder="Enter your code here..."
             className="h-full"
           />
         </div>
