@@ -9,3 +9,26 @@
   --color-light: #948979;
   --color-cream: #DFD0B8;
 }
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #948979 #222831;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #222831;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #948979;
+  border-radius: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #DFD0B8;
+}

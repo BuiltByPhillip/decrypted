@@ -90,7 +90,7 @@ export function parse(input: string, startIndex: number): Code {
           .map(p => p.trim())
     }
     else if (line.startsWith("step")) {
-      const [step, nextI] = stepParse(lines, i + 1);
+      const [step, nextI] = stepParse(lines, i);
       i = nextI
       code.step.push(step)
       continue
@@ -108,12 +108,18 @@ export function parse(input: string, startIndex: number): Code {
 }
 
 function stepParse(lines: string[], startIndex: number): [Step, number] {
-  let i: number = startIndex;
+  let i: number = startIndex + 1;
 
   let currentStep: Step = { description: "" }
 
   while (i < lines.length) {
     const line: string | undefined = lines[i]?.trim()
+
+    if (line === "") {
+      // Skip empty line
+      i++
+      continue
+    }
 
     if (line == undefined) {
       throw new Error(`Line ${line} - Line is undefined`);
@@ -132,6 +138,7 @@ function stepParse(lines: string[], startIndex: number): [Step, number] {
       const [exercise, nextI] = exerciseParse(lines, i+1)
       i = nextI
       currentStep.exercise = exercise
+      continue
     }
     else {
       return [currentStep, i]
@@ -166,9 +173,12 @@ function exerciseParse(lines: string[], startIndex: number): [Exercise, number] 
       pendingExercise.hint = line.replace("hint:", "").trim()
     }
     else if (line.startsWith("palette:")) {
+      pendingExercise.palette = []
+      /*
       pendingExercise.palette = line.replace("palette:", "").trim()
         .split(",")
         .map(p => evaluate(p.trim()))
+       */
     }
     else if (line.startsWith("options:")) {
       const [options, nextI] = optionsParse(lines, i+1)
