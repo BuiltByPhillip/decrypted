@@ -19,7 +19,7 @@ type Exercise = {
   type: ExerciseType;
   prompt: string;
   hint?: string;
-  palette?: Expr[];
+  palette?: PaletteItem[];
   options?: string[];
   answer: Expr[];
 }
@@ -36,7 +36,7 @@ type Expr =
 type PaletteItem =
   | { kind: "var"; name: string }
   | { kind: "int"; value: number }
-  | { kind: "operator"; op: "pow" | "mod" | "less" | "greater" | "equal" };
+  | { kind: "operator"; op: "add" | "sub" | "pow" | "mod" | "mul" | "less" | "greater" | "equal" };
 
 const EXERCISE_TYPES = [
   "construct",
@@ -62,6 +62,33 @@ function evaluate(input: string): Expr {
 
   // Expression is invalid and not currently supported
   throw new Error(`Invalid expression: '${input}'`);
+}
+
+function parsePaletteItem(input: string): PaletteItem {
+  const s = input.trim();
+
+  // Operators
+  if (s === "+") return { kind: "operator", op: "add"};
+  if (s === "-") return { kind: "operator", op: "sub" };
+  if (s === "^") return { kind: "operator", op: "pow"}
+  if (s === "mod") return { kind: "operator", op: "mod" };
+  if (s === "*") return { kind: "operator", op: "mul" };
+  if (s === "<") return { kind: "operator", op: "less" };
+  if (s === ">") return { kind: "operator", op: "greater" };
+  if (s === "=" || s === "==") return { kind: "operator", op: "equal" };
+
+  // Integer
+  if (/^\d+$/.test(s)) {
+    return { kind: "int", value: Number(s) };
+  }
+
+  // Variable
+  if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(s)) {
+    return { kind: "var", name: s };
+  }
+
+  throw new Error(`Invalid palette item: '${input}'`);
+
 }
 
 export function parse(input: string, startIndex: number): Code {
@@ -173,12 +200,9 @@ function exerciseParse(lines: string[], startIndex: number): [Exercise, number] 
       pendingExercise.hint = line.replace("hint:", "").trim()
     }
     else if (line.startsWith("palette:")) {
-      pendingExercise.palette = []
-      /*
       pendingExercise.palette = line.replace("palette:", "").trim()
         .split(",")
-        .map(p => evaluate(p.trim()))
-       */
+        .map(p => parsePaletteItem(p.trim()))
     }
     else if (line.startsWith("options:")) {
       const [options, nextI] = optionsParse(lines, i+1)
