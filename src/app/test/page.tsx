@@ -39,6 +39,7 @@ export default function TestPage() {
     },
     ".cm-scroller": {
       fontFamily: "ui-monospace, SFMono-Regular, monospace",
+      fontSize: "0.875rem",
       backgroundColor: "#222831",
       color: "#DFD0B8",
     },

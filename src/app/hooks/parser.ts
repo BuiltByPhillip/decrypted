@@ -36,7 +36,7 @@ type Expr =
 type PaletteItem =
   | { kind: "var"; name: string }
   | { kind: "int"; value: number }
-  | { kind: "operator"; op: "add" | "sub" | "pow" | "mod" | "mul" | "less" | "greater" | "equal" };
+  | { kind: "operator"; op: "add" | "sub" | "pow" | "div" | "mod" | "mul" | "less" | "greater" | "equal" };
 
 const EXERCISE_TYPES = [
   "construct",
@@ -71,6 +71,7 @@ function parsePaletteItem(input: string): PaletteItem {
   if (s === "+") return { kind: "operator", op: "add"};
   if (s === "-") return { kind: "operator", op: "sub" };
   if (s === "^") return { kind: "operator", op: "pow"}
+  if (s === "/") return { kind: "operator", op: "div" };
   if (s === "mod") return { kind: "operator", op: "mod" };
   if (s === "*") return { kind: "operator", op: "mul" };
   if (s === "<") return { kind: "operator", op: "less" };
