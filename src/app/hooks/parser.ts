@@ -42,7 +42,7 @@ type PaletteItem =
   | { kind: "int"; value: number }
   | { kind: "operator"; op: "add" | "sub" | "pow" | "div" | "mod" | "mul" | "less" | "greater" | "equal" };
 
-type TokenType = "NUMBER" | "IDENTIFIER" | "OPERATOR" | "LPAR" | "RPAR" | "PLACEHOLDER" | "EOF";
+type TokenType = "NUMBER" | "VAR" | "OPERATOR" | "LPAR" | "RPAR" | "PLACEHOLDER" | "EOF";
 
 type Token = {
   type: TokenType;
@@ -58,7 +58,7 @@ const EXERCISE_TYPES = [
 
 type ExerciseType = typeof EXERCISE_TYPES[number];
 
-function tokenize(input: string): Token[] {
+export function tokenize(input: string): Token[] {
   function inner (i: number, acc: Token[]): Token[] {
     // Base case
     if (i >= input.length) {
@@ -66,23 +66,75 @@ function tokenize(input: string): Token[] {
     }
     // Skip whitespaces
     if (input[i] === " ") {
-      return inner (i++, acc)
+      return inner (i+1, acc)
     }
     // Check for numbers (Consumes all digits)
-    if (/\d/.test(input[i])) {
+    if (/\d/.test(input[i] ?? "")) {
       let numStr = "";
       let j = i;
-      while (j < input.length && /\d/.test(input[j])) {
+      while (j < input.length && /\d/.test(input[j] ?? "")) {
         numStr += input[j];
         j++;
       }
-      return inner(i++, [...acc, { type: "NUMBER", value: numStr}])
+      return inner(j, [...acc, { type: "NUMBER", value: numStr}])
     }
-    // Check for indentifiers/variables
+    // Check for variables
+    if (/[a-zA-Z_]/.test(input[i] ?? "")) {
+      let str: string = ""
+      let j: number = i
+      while (j < input.length && /[a-zA-Z_]/.test(input[j] ?? "")) {
+        str += input[j];
+        j++
+      }
+      return inner(j, [...acc, { type: "VAR", value: str }])
+    }
     // Check for placeholders $1, $2, etc.
-    // Check for operators
+    if (input[i] === "$") {
+      let numStr: string = "$";
+      let j: number = i+1;
+      while (j < input.length && /\d/.test(input[j] ?? "")) {
+        numStr += input[j];
+        j++;
+      }
+      return inner(j, [...acc, { type: "PLACEHOLDER", value: numStr }]);
+    }
+    // Check for multi-char operators (IMPORTANT THAT THIS IS CHECKED BEFORE SINGLE-CHAR OPERATORS)
+    if (input.substring(i, i + 3) === "mod") {
+      return inner(i + 3, [...acc, { type: "OPERATOR", value: "mod" }]);
+    }
+    // Check for single-char operators (IMPORTANT THAT THIS IS CHECK AFTER MULTI-CHAR OPERATORS)
+    if (input[i] === "*") {
+      return inner(i+1, [...acc, { type: "OPERATOR", value: "*" }]);
+    }
+    if (input[i] === "/") {
+      return inner(i+1, [...acc, { type: "OPERATOR", value: "/" }]);
+    }
+    if (input[i] === "^") {
+      return inner(i+1, [...acc, { type: "OPERATOR", value: "^" }]);
+    }
+    if (input[i] === "+") {
+      return inner(i+1, [...acc, { type: "OPERATOR", value: "+" }]);
+    }
+    if (input[i] === "-") {
+      return inner(i+1, [...acc, { type: "OPERATOR", value: "-" }]);
+    }
+    if (input[i] === "<") {
+      return inner(i+1, [...acc, { type: "OPERATOR", value: "<" }]);
+    }
+    if (input[i] === ">") {
+      return inner(i+1, [...acc, { type: "OPERATOR", value: ">" }]);
+    }
+    if (input[i] === "=") {
+      return inner(i+1, [...acc, { type: "OPERATOR", value: "=" }]);
+    }
     // Check for parentheses
-    throw new Error(`Unexpected character: ${s[i]}`);
+    if (input[i] === "(") {
+      return inner(i+1, [...acc, { type: "LPAR", value: "("}])
+    }
+    if (input[i] === ")") {
+      return inner(i+1, [...acc, { type: "RPAR", value: ")"}])
+    }
+    throw new Error(`Unexpected character: ${input[i]}`);
   }
   return inner(0, [])
 }
@@ -310,5 +362,3 @@ function finalizeExercise(fields: Partial<Exercise>, line: number): Exercise {
 function isExerciseType(value: string): value is ExerciseType {
   return (EXERCISE_TYPES as readonly string[]).includes(value);
 }
-
-
