@@ -27,8 +27,12 @@ type Exercise = {
 type Expr =
   | { kind: "var"; name: string }
   | { kind: "int"; value: number}
+  | { kind: "placeholder"; index: number }
   | { kind: "pow"; base: Expr; exp: Expr }
   | { kind: "mod"; left: Expr; right: Expr }
+  | { kind: "mul"; left: Expr; right: Expr }
+  | { kind: "add"; left: Expr; right: Expr }
+  | { kind: "sub"; left: Expr; right: Expr }
   | { kind: "less"; left: Expr; right: Expr }
   | { kind: "greater"; left: Expr; right: Expr }
   | { kind: "equal"; left: Expr; right: Expr }
@@ -38,6 +42,13 @@ type PaletteItem =
   | { kind: "int"; value: number }
   | { kind: "operator"; op: "add" | "sub" | "pow" | "div" | "mod" | "mul" | "less" | "greater" | "equal" };
 
+type TokenType = "NUMBER" | "IDENTIFIER" | "OPERATOR" | "LPAR" | "RPAR" | "PLACEHOLDER" | "EOF";
+
+type Token = {
+  type: TokenType;
+  value: string;
+}
+
 const EXERCISE_TYPES = [
   "construct",
   "fill",
@@ -46,6 +57,35 @@ const EXERCISE_TYPES = [
 ] as const;
 
 type ExerciseType = typeof EXERCISE_TYPES[number];
+
+function tokenize(input: string): Token[] {
+  function inner (i: number, acc: Token[]): Token[] {
+    // Base case
+    if (i >= input.length) {
+      return [...acc, { type: "EOF", value: "" }];
+    }
+    // Skip whitespaces
+    if (input[i] === " ") {
+      return inner (i++, acc)
+    }
+    // Check for numbers (Consumes all digits)
+    if (/\d/.test(input[i])) {
+      let numStr = "";
+      let j = i;
+      while (j < input.length && /\d/.test(input[j])) {
+        numStr += input[j];
+        j++;
+      }
+      return inner(i++, [...acc, { type: "NUMBER", value: numStr}])
+    }
+    // Check for indentifiers/variables
+    // Check for placeholders $1, $2, etc.
+    // Check for operators
+    // Check for parentheses
+    throw new Error(`Unexpected character: ${s[i]}`);
+  }
+  return inner(0, [])
+}
 
 function evaluate(input: string): Expr {
   const s = input.trim();
