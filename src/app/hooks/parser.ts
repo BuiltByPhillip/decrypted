@@ -29,6 +29,7 @@ type Expr =
   | { kind: "int"; value: number}
   | { kind: "placeholder"; index: number }
   | { kind: "and"; left: Expr, right: Expr }
+  | { kind: "or"; left: Expr, right: Expr }
   | { kind: "pow"; base: Expr; exp: Expr }
   | { kind: "mod"; left: Expr; right: Expr }
   | { kind: "mul"; left: Expr; right: Expr }
@@ -42,7 +43,7 @@ type Expr =
 type PaletteItem =
   | { kind: "var"; name: string }
   | { kind: "int"; value: number }
-  | { kind: "operator"; op: "and" | "add" | "sub" | "pow" | "div" | "mod" | "mul" | "less" | "greater" | "equal" };
+  | { kind: "operator"; op: "and" | "or" | "add" | "sub" | "pow" | "div" | "mod" | "mul" | "less" | "greater" | "equal" };
 
 type TokenType = "NUMBER" | "VAR" | "OPERATOR" | "LPAR" | "RPAR" | "PLACEHOLDER" | "EOF";
 
@@ -86,6 +87,9 @@ export function tokenize(input: string): Token[] {
     }
     if (input.substring(i, i + 3) === "and") {
       return inner(i + 3, [...acc, { type: "OPERATOR", value: "and"}]);
+    }
+    if (input.substring(i, i + 2) === "or") {
+      return inner(i + 2, [...acc, { type: "OPERATOR", value: "or"}]);
     }
     // Check for variables
     if (/[a-zA-Z_]/.test(input[i] ?? "")) {
@@ -178,7 +182,7 @@ class ExpressionParser {
   }
 
   private precedence(op: string): number {
-    if (op === "and") return 0; // weakest
+    if (op === "and" || op === "or") return 0; // weakest
     if (op === "<" || op === ">" || op === "=") return 1;
     if (op === "+" || op === "-") return 2;
     if (op === "*" || op === "mod" || op === "/") return 3;
@@ -230,6 +234,8 @@ class ExpressionParser {
         return { kind: "mod", left: left, right: right };
       case "and":
         return { kind: "and", left: left, right: right };
+      case "or":
+        return { kind: "or", left: left, right: right };
       case "*":
         return { kind: "mul", left: left, right: right };
       case "/":
@@ -260,6 +266,7 @@ function parsePaletteItem(input: string): PaletteItem {
   if (s === "/") return { kind: "operator", op: "div" };
   if (s === "mod") return { kind: "operator", op: "mod" };
   if (s === "and") return { kind: "operator", op: "and" };
+  if (s === "or") return { kind: "operator", op: "or" };
   if (s === "*") return { kind: "operator", op: "mul" };
   if (s === "<") return { kind: "operator", op: "less" };
   if (s === ">") return { kind: "operator", op: "greater" };
