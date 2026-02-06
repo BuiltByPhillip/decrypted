@@ -28,6 +28,7 @@ type Expr =
   | { kind: "var"; name: string }
   | { kind: "int"; value: number}
   | { kind: "placeholder"; index: number }
+  | { kind: "and"; left: Expr, right: Expr }
   | { kind: "pow"; base: Expr; exp: Expr }
   | { kind: "mod"; left: Expr; right: Expr }
   | { kind: "mul"; left: Expr; right: Expr }
@@ -41,7 +42,7 @@ type Expr =
 type PaletteItem =
   | { kind: "var"; name: string }
   | { kind: "int"; value: number }
-  | { kind: "operator"; op: "add" | "sub" | "pow" | "div" | "mod" | "mul" | "less" | "greater" | "equal" };
+  | { kind: "operator"; op: "and" | "add" | "sub" | "pow" | "div" | "mod" | "mul" | "less" | "greater" | "equal" };
 
 type TokenType = "NUMBER" | "VAR" | "OPERATOR" | "LPAR" | "RPAR" | "PLACEHOLDER" | "EOF";
 
@@ -79,9 +80,12 @@ export function tokenize(input: string): Token[] {
       }
       return inner(j, [...acc, { type: "NUMBER", value: numStr}])
     }
-    // Check for multi-char operators BEFORE variables (so "mod" isn't consumed as a variable)
+    // Check for multi-char operators BEFORE variables (so they aren't consumed as a variable)
     if (input.substring(i, i + 3) === "mod") {
       return inner(i + 3, [...acc, { type: "OPERATOR", value: "mod" }]);
+    }
+    if (input.substring(i, i + 3) === "and") {
+      return inner(i + 3, [...acc, { type: "OPERATOR", value: "and"}]);
     }
     // Check for variables
     if (/[a-zA-Z_]/.test(input[i] ?? "")) {
@@ -174,7 +178,8 @@ class ExpressionParser {
   }
 
   private precedence(op: string): number {
-    if (op === "<" || op === ">" || op === "=") return 1;  // weakest
+    if (op === "and") return 0; // weakest
+    if (op === "<" || op === ">" || op === "=") return 1;
     if (op === "+" || op === "-") return 2;
     if (op === "*" || op === "mod" || op === "/") return 3;
     if (op === "^") return 4;  // strongest
@@ -223,6 +228,8 @@ class ExpressionParser {
         return { kind: "pow", base: left, exp: right };
       case "mod":
         return { kind: "mod", left: left, right: right };
+      case "and":
+        return { kind: "and", left: left, right: right };
       case "*":
         return { kind: "mul", left: left, right: right };
       case "/":
@@ -252,6 +259,7 @@ function parsePaletteItem(input: string): PaletteItem {
   if (s === "^") return { kind: "operator", op: "pow"}
   if (s === "/") return { kind: "operator", op: "div" };
   if (s === "mod") return { kind: "operator", op: "mod" };
+  if (s === "and") return { kind: "operator", op: "and" };
   if (s === "*") return { kind: "operator", op: "mul" };
   if (s === "<") return { kind: "operator", op: "less" };
   if (s === ">") return { kind: "operator", op: "greater" };

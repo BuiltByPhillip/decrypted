@@ -16,7 +16,7 @@ step 1:
         type: fill
         prompt: Choose Alice's secret exponent
         hint: Choose a random integer in the range [2, p-2]
-        answer: 2 < $1 < p-2
+        answer: 2 < $1 and $1 < p-2
 step 2:
     description: Alice computes her public key A
     exercise:
