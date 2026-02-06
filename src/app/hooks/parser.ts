@@ -31,6 +31,7 @@ type Expr =
   | { kind: "pow"; base: Expr; exp: Expr }
   | { kind: "mod"; left: Expr; right: Expr }
   | { kind: "mul"; left: Expr; right: Expr }
+  | { kind: "div"; left: Expr; right: Expr }
   | { kind: "add"; left: Expr; right: Expr }
   | { kind: "sub"; left: Expr; right: Expr }
   | { kind: "less"; left: Expr; right: Expr }
@@ -78,6 +79,10 @@ export function tokenize(input: string): Token[] {
       }
       return inner(j, [...acc, { type: "NUMBER", value: numStr}])
     }
+    // Check for multi-char operators BEFORE variables (so "mod" isn't consumed as a variable)
+    if (input.substring(i, i + 3) === "mod") {
+      return inner(i + 3, [...acc, { type: "OPERATOR", value: "mod" }]);
+    }
     // Check for variables
     if (/[a-zA-Z_]/.test(input[i] ?? "")) {
       let str: string = ""
@@ -98,11 +103,7 @@ export function tokenize(input: string): Token[] {
       }
       return inner(j, [...acc, { type: "PLACEHOLDER", value: numStr }]);
     }
-    // Check for multi-char operators (IMPORTANT THAT THIS IS CHECKED BEFORE SINGLE-CHAR OPERATORS)
-    if (input.substring(i, i + 3) === "mod") {
-      return inner(i + 3, [...acc, { type: "OPERATOR", value: "mod" }]);
-    }
-    // Check for single-char operators (IMPORTANT THAT THIS IS CHECK AFTER MULTI-CHAR OPERATORS)
+    // Check for single-char operators
     if (input[i] === "*") {
       return inner(i+1, [...acc, { type: "OPERATOR", value: "*" }]);
     }
@@ -154,6 +155,92 @@ function evaluate(input: string): Expr {
 
   // Expression is invalid and not currently supported
   throw new Error(`Invalid expression: '${input}'`);
+}
+
+class ExpressionParser {
+  private readonly tokens: Token[];
+  private current: number = 0;
+
+  peek(): Token { return this.tokens[this.current]!; }
+  advance(): Token { return this.tokens[this.current++]!; }
+  isAtEnd(): boolean { return this.peek().type === "EOF"}
+
+  constructor(tokens: Token[]) {
+    this.tokens = tokens;
+  }
+
+  parse(): Expr {
+    return this.parseExpression(0)
+  }
+
+  private precedence(op: string): number {
+    if (op === "<" || op === ">" || op === "=") return 1;  // weakest
+    if (op === "+" || op === "-") return 2;
+    if (op === "*" || op === "mod" || op === "/") return 3;
+    if (op === "^") return 4;  // strongest
+    return 0;
+  }
+
+  private parsePrimary(): Expr {
+    const token = this.advance();
+
+    switch (token.type) {
+      case "NUMBER":
+        return { kind: "int", value: Number(token.value) }
+      case "VAR":
+        return { kind: "var", name: token.value }
+      case "PLACEHOLDER":
+        // token.value is $1, $2, etc. - therefore we remove $
+        return { kind: "placeholder", index: Number(token.value.slice(1)) }
+      case "LPAR":
+        const expr = this.parseExpression(0);
+        if (this.peek().type !== "RPAR") {
+          throw new Error("Expected closing parenthesis")
+        }
+        this.advance();
+        return expr;
+      default:
+        throw new Error(`Unexpected token: ${token.type} '${token.value}'`);
+    }
+  }
+
+  private parseExpression(minPrecedence: number): Expr {
+    let left = this.parsePrimary();
+
+    while (!this.isAtEnd() && this.peek().type === "OPERATOR" && this.precedence(this.peek().value) >= minPrecedence) {
+      const op: string = this.advance().value;
+      const prec: number = this.precedence(op);
+      const right: Expr = this.parseExpression(prec + 1);
+      left = this.makeNode(op, left, right);
+    }
+    return left;
+  }
+
+  private makeNode(op: string, left: Expr, right: Expr): Expr {
+    switch (op) {
+      // Below should only contain binary operators
+      case "^":
+        return { kind: "pow", base: left, exp: right };
+      case "mod":
+        return { kind: "mod", left: left, right: right };
+      case "*":
+        return { kind: "mul", left: left, right: right };
+      case "/":
+        return { kind: "div", left: left, right: right };
+      case "+":
+        return { kind: "add", left: left, right: right };
+      case "-":
+        return { kind: "sub", left: left, right: right };
+      case "<":
+        return { kind: "less", left: left, right: right };
+      case ">":
+        return { kind: "greater", left: left, right: right };
+      case "=":
+        return { kind: "equal", left: left, right: right };
+      default:
+        throw new Error(`Unknown operator: ${op}`);
+    }
+  }
 }
 
 function parsePaletteItem(input: string): PaletteItem {
@@ -307,8 +394,10 @@ function exerciseParse(lines: string[], startIndex: number): [Exercise, number] 
       continue
     }
     else if (line.startsWith("answer:")) {
-      pendingExercise.answer = [] // Temp
-      // TODO: Parse options into expression
+      const answerText = line.replace("answer:", "").trim()
+      const tokens = tokenize(answerText)
+      const parser = new ExpressionParser(tokens)
+      pendingExercise.answer = [parser.parse()]
     }
     else {
       return [finalizeExercise(pendingExercise, startIndex), i]
