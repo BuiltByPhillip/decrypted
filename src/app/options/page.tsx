@@ -11,6 +11,7 @@ export default function OptionsPage() {
         description={"Bob computes his public key B"}
         prompt={"Which expression does Bob use to calculate his public key B"}
         hint={"This is an example of a hint"}
+        answers={[]}
       />
 
     </main>

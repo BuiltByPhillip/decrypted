@@ -11,9 +11,10 @@ type SelectExerciseProps = {
   description: string;
   prompt: string;
   hint?: string;
+  answers: string[];
 }
 
-export default function SelectExercise({numberOfOptions, options, description, prompt, hint}: SelectExerciseProps) {
+export default function SelectExercise({numberOfOptions, options, description, prompt, hint, answers}: SelectExerciseProps) {
   const [selected, setSelected] = useState<number[]>([]);
 
   const handleSelect = (index: number) => {
