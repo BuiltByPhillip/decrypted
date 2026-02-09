@@ -9,9 +9,10 @@ export default function OptionsPage() {
         numberOfOptions={4}
         options={["Option A", "Option B", "Option C", "Option D"]}
         description={"Bob computes his public key B"}
-        prompt={"Which expression does bob use to calculate his public key B"}
+        prompt={"Which expression does Bob use to calculate his public key B"}
         hint={"This is an example of a hint"}
       />
+
     </main>
   );
 }

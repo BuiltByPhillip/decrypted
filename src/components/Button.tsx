@@ -2,7 +2,7 @@
 
 import { type ButtonHTMLAttributes } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "option";
+type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "option" | "submit";
 type ButtonSize = "none" | "sm" | "md" | "lg";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -13,11 +13,12 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-cream text-dark hover:brightness-110",
-  secondary: "bg-medium text-cream hover:brightness-125",
+  primary: "bg-cream text-white hover:brightness-110",
+  secondary: "bg-medium text-white hover:brightness-125",
   outline: "bg-transparent border-2 border-cream text-cream hover:bg-cream/20",
   ghost: "bg-transparent text-cream hover:bg-white/10",
-  option: "bg-dark hover:brightness-150",
+  option: "hover:brightness-90",
+  submit: "bg-green text-green-foreground hover:brightness-70"
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -42,8 +43,8 @@ export default function Button({
         ${variantStyles[variant]}
         ${sizeStyles[size]}
         ${fullWidth ? "w-full" : ""}
-        ${variant === "option" ? (selected ? "bg-green text-green-foreground" : "text-white") : ""}  
-        rounded-md font-medium transition-colors duration-200 hover:cursor-pointer
+        ${variant === "option" ? (selected ? "bg-amber text-amber-foreground" : "bg-dark text-white") : ""}  
+        rounded-2xl font-medium transition-colors duration-200 hover:cursor-pointer
         disabled:opacity-50 disabled:cursor-not-allowed text-center
         ${className}
       `}

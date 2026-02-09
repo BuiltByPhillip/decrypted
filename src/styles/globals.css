@@ -10,6 +10,8 @@
   --color-cream: #DFD0B8;
   --color-green: #22c55e;
   --color-green-foreground: #052e16;
+  --color-amber: #f59e0b;
+  --color-amber-foreground: #451a03;
 }
 
 .custom-scrollbar {

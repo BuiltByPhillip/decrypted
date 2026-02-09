@@ -50,7 +50,7 @@ export default function SelectExercise({numberOfOptions, options, description, p
 
       <div className="relative flex justify-center w-full">
         {/* Answer button */}
-        <Button variant="secondary" className="w-100 py-2">answer</Button>
+        <Button variant="submit" className="w-100 py-3">Answer</Button>
 
         {/* Hint button - conditionally rendered, positioned to the right */}
         {hint && (
