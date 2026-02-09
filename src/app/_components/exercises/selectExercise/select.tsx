@@ -25,12 +25,14 @@ export default function SelectExercise({numberOfOptions, options, description, p
   return (
     <div className="flex flex-col items-center w-full">
 
-      <div className="flex flex-col items-center text-2xl text-white p-8">
+      <div className="flex flex-col items-center p-8 gap-3">
         {/* Description */}
-        <span className="">{description}</span>
+        <span className="text-4xl font-bold bg-gradient-to-r from-cream to-light bg-clip-text text-transparent">
+          {description}
+        </span>
 
         {/* Prompt*/}
-        <span className="">{prompt}</span>
+        <span className="text-xl text-cream/70">{prompt}</span>
       </div>
 
       {/* Multiple-choice option buttons */}
@@ -54,7 +56,7 @@ export default function SelectExercise({numberOfOptions, options, description, p
 
         {/* Hint button - conditionally rendered, positioned to the right */}
         {hint && (
-          <div className="absolute right-0">
+          <div className="absolute right-0 py-3">
             <Hint hint={hint}/>
           </div>
         )}

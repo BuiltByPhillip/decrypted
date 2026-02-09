@@ -12,6 +12,8 @@
   --color-green-foreground: #052e16;
   --color-amber: #f59e0b;
   --color-amber-foreground: #451a03;
+  --color-muted: #94a3b8;
+  --color-muted-foreground: #1e293b;
 }
 
 .custom-scrollbar {

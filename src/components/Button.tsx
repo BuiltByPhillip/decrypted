@@ -43,7 +43,7 @@ export default function Button({
         ${variantStyles[variant]}
         ${sizeStyles[size]}
         ${fullWidth ? "w-full" : ""}
-        ${variant === "option" ? (selected ? "bg-amber text-amber-foreground" : "bg-dark text-white") : ""}  
+        ${variant === "option" ? (selected ? "bg-amber text-amber-foreground" : "bg-dark text-muted") : ""}  
         rounded-2xl font-medium transition-all hover:cursor-pointer
         disabled:opacity-50 disabled:cursor-not-allowed text-center
         ${className}
