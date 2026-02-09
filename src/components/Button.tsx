@@ -9,14 +9,15 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;
+  selected?: boolean;
 };
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-cream text-dark hover:bg-light",
-  secondary: "bg-medium text-cream hover:bg-light",
-  outline: "bg-transparent border-2 border-cream text-cream hover:bg-cream hover:text-dark",
-  ghost: "bg-transparent text-cream",
-  option: "bg-dark text-white hover:bg-light",
+  primary: "bg-cream text-dark hover:brightness-110",
+  secondary: "bg-medium text-cream hover:brightness-125",
+  outline: "bg-transparent border-2 border-cream text-cream hover:bg-cream/20",
+  ghost: "bg-transparent text-cream hover:bg-white/10",
+  option: "bg-dark hover:brightness-150",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -32,6 +33,7 @@ export default function Button({
   fullWidth = false,
   className = "",
   children,
+  selected,
   ...props
 }: ButtonProps) {
   return (
@@ -40,6 +42,7 @@ export default function Button({
         ${variantStyles[variant]}
         ${sizeStyles[size]}
         ${fullWidth ? "w-full" : ""}
+        ${variant === "option" ? (selected ? "bg-green text-green-foreground" : "text-white") : ""}  
         rounded-md font-medium transition-colors duration-200 hover:cursor-pointer
         disabled:opacity-50 disabled:cursor-not-allowed text-center
         ${className}
