@@ -17,8 +17,8 @@ const variantStyles: Record<ButtonVariant, string> = {
   secondary: "bg-medium text-white hover:brightness-125",
   outline: "bg-transparent border-2 border-cream text-cream hover:bg-cream/20",
   ghost: "bg-transparent text-cream hover:bg-white/10",
-  option: "hover:brightness-90",
-  submit: "bg-green text-green-foreground hover:brightness-70"
+  option: "hover:brightness-90 transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-103",
+  submit: "bg-green text-green-foreground transition ease-in-out delay-100 duration-300 hover:scale-105",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -44,7 +44,7 @@ export default function Button({
         ${sizeStyles[size]}
         ${fullWidth ? "w-full" : ""}
         ${variant === "option" ? (selected ? "bg-amber text-amber-foreground" : "bg-dark text-white") : ""}  
-        rounded-2xl font-medium transition-colors duration-200 hover:cursor-pointer
+        rounded-2xl font-medium transition-all hover:cursor-pointer
         disabled:opacity-50 disabled:cursor-not-allowed text-center
         ${className}
       `}
