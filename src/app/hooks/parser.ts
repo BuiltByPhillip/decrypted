@@ -1,5 +1,3 @@
-import { options } from "prettier-plugin-tailwindcss";
-
 type Code = {
   information: Information;
   step: Step[];
@@ -13,7 +11,7 @@ type Information = {
 
 type Definition = {
   role: string; // "generator", "prime", etc.
-  symbols: string[]; // ["g", "x", "a", "b"]
+  symbols: Expr[]; // [g, x, a, b]
 }
 
 type Step = {
@@ -32,6 +30,7 @@ type Exercise = {
 
 type Expr =
   | { kind: "var"; name: string }
+  | { kind: "role"; name: string }
   | { kind: "int"; value: number}
   | { kind: "placeholder"; index: number }
   | { kind: "and"; left: Expr, right: Expr }
@@ -48,10 +47,11 @@ type Expr =
 
 type PaletteItem =
   | { kind: "var"; name: string }
+  | { kind: "role"; name: string }
   | { kind: "int"; value: number }
   | { kind: "operator"; op: "and" | "or" | "add" | "sub" | "pow" | "div" | "mod" | "mul" | "less" | "greater" | "equal" };
 
-type TokenType = "NUMBER" | "VAR" | "OPERATOR" | "LPAR" | "RPAR" | "LBRACE" | "RBRACE" | "PLACEHOLDER" | "KEYWORD" | "COMMA" | "EOF";
+type TokenType = "NUMBER" | "VAR" | "OPERATOR" | "LPAR" | "RPAR" | "LBRACE" | "RBRACE" | "PLACEHOLDER" | "KEYWORD" | "COMMA" | "ROLE_REF" | "EOF";
 
 type Token = {
   type: TokenType;
@@ -160,8 +160,19 @@ export function tokenize(input: string): Token[] {
     }
     // Check for braces
     if (input[i] === "{") {
-      return inner(i+1, [...acc, { type: "LBRACE", value: "{"}])
+      let j = i + 1;
+      let name = "";
+      while (j < input.length && /[a-zA-Z_]/.test(input[j] ?? "")) {
+        name += input[j];
+        j++;
+      }
+      if (input[j] === "}" && name.length > 0) {
+        return inner(j + 1, [...acc, { type: "ROLE_REF", value: name }]);
+      }
+      // Fall through to regular LBRACE if not a role reference
+      return inner(i + 1, [...acc, { type: "LBRACE", value: "{" }]);
     }
+
     if (input[i] === "}") {
       return inner(i+1, [...acc, { type: "RBRACE", value: "}"}])
     }
@@ -213,7 +224,7 @@ class ExpressionParser {
   }
 
   private parsePrimary(): Expr {
-    const token = this.advance();
+    const token: Token = this.advance();
 
     switch (token.type) {
       case "NUMBER":
@@ -223,6 +234,8 @@ class ExpressionParser {
       case "PLACEHOLDER":
         // token.value is $1, $2, etc. - therefore we remove $
         return { kind: "placeholder", index: Number(token.value.slice(1)) }
+      case "ROLE_REF":
+        return { kind: "role", name: token.value };
       case "LPAR":
         const expr = this.parseExpression(0);
         if (this.peek().type !== "RPAR") {
@@ -298,7 +311,10 @@ function parsePaletteItem(input: string): PaletteItem {
   if (/^\d+$/.test(s)) {
     return { kind: "int", value: Number(s) };
   }
-
+  // Role reference like {generator}
+  if (s.startsWith("{") && s.endsWith("}")) {
+    return { kind: "role", name: s.slice(1, -1) };
+  }
   // Variable
   if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(s)) {
     return { kind: "var", name: s };
@@ -401,7 +417,7 @@ function parseDefinition(tokens: Token[]): Definition {
   // Collect options until RBRACE
   while (tokens[i] && tokens[i]?.type !== "RBRACE") {
     if (tokens[i]?.type === "VAR") {
-      definition.symbols.push(tokens[i]!.value);
+      definition.symbols.push({ kind: "var", name: tokens[i]!.value });
     }
     i++;
   }
