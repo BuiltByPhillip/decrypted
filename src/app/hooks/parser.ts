@@ -8,6 +8,12 @@ type Code = {
 type Information = {
   name: string;
   participants: string[];
+  definition: Definition[];
+}
+
+type Definition = {
+  role: string; // "generator", "prime", etc.
+  symbols: string[]; // ["g", "x", "a", "b"]
 }
 
 type Step = {
@@ -45,7 +51,7 @@ type PaletteItem =
   | { kind: "int"; value: number }
   | { kind: "operator"; op: "and" | "or" | "add" | "sub" | "pow" | "div" | "mod" | "mul" | "less" | "greater" | "equal" };
 
-type TokenType = "NUMBER" | "VAR" | "OPERATOR" | "LPAR" | "RPAR" | "PLACEHOLDER" | "EOF";
+type TokenType = "NUMBER" | "VAR" | "OPERATOR" | "LPAR" | "RPAR" | "LBRACE" | "RBRACE" | "PLACEHOLDER" | "KEYWORD" | "COMMA" | "EOF";
 
 type Token = {
   type: TokenType;
@@ -67,9 +73,9 @@ export function tokenize(input: string): Token[] {
     if (i >= input.length) {
       return [...acc, { type: "EOF", value: "" }];
     }
-    // Skip whitespaces
-    if (input[i] === " ") {
-      return inner (i+1, acc)
+    // Skip whitespaces, new line, tabs
+    if (input[i] === " " || input[i] === "\n" || input[i] === "\t") {
+      return inner(i+1, acc)
     }
     // Check for numbers (Consumes all digits)
     if (/\d/.test(input[i] ?? "")) {
@@ -91,6 +97,10 @@ export function tokenize(input: string): Token[] {
     if (input.substring(i, i + 2) === "or") {
       return inner(i + 2, [...acc, { type: "OPERATOR", value: "or"}]);
     }
+    // Check for element of operator
+    if (input.substring(i, i + 5) === "\\elem") {
+      return inner(i + 5, [...acc, { type: "KEYWORD", value: "elem" }]);
+    }
     // Check for variables
     if (/[a-zA-Z_]/.test(input[i] ?? "")) {
       let str: string = ""
@@ -111,6 +121,11 @@ export function tokenize(input: string): Token[] {
       }
       return inner(j, [...acc, { type: "PLACEHOLDER", value: numStr }]);
     }
+    // CHeck for comma
+    if (input[i] === ",") {
+      return inner(i+1, [...acc, { type: "COMMA", value: "," }]);
+    }
+
     // Check for single-char operators
     if (input[i] === "*") {
       return inner(i+1, [...acc, { type: "OPERATOR", value: "*" }]);
@@ -142,6 +157,13 @@ export function tokenize(input: string): Token[] {
     }
     if (input[i] === ")") {
       return inner(i+1, [...acc, { type: "RPAR", value: ")"}])
+    }
+    // Check for braces
+    if (input[i] === "{") {
+      return inner(i+1, [...acc, { type: "LBRACE", value: "{"}])
+    }
+    if (input[i] === "}") {
+      return inner(i+1, [...acc, { type: "RBRACE", value: "}"}])
     }
     throw new Error(`Unexpected character: ${input[i]}`);
   }
@@ -289,7 +311,7 @@ function parsePaletteItem(input: string): PaletteItem {
 export function parse(input: string, startIndex: number): Code {
   const lines: string[] = input.split("\n");
   let code: Code = {
-    information: { name: "", participants: []},
+    information: { name: "", participants: [], definition: []},
     step: []
   }
 
@@ -311,6 +333,11 @@ export function parse(input: string, startIndex: number): Code {
           .split(",")
           .map(p => p.trim())
     }
+    else if (line.startsWith("define:")) {
+      const [definition, nextI] = defineParse(lines, i)
+      code.information.definition = definition
+      i = nextI
+    }
     else if (line.startsWith("step")) {
       const [step, nextI] = stepParse(lines, i);
       i = nextI
@@ -327,6 +354,59 @@ export function parse(input: string, startIndex: number): Code {
   }
 
   return code;
+}
+
+function defineParse(lines: string[], startIndex: number): [Definition[], number] {
+  let i: number = startIndex + 1;
+  let definitions: Definition[] = [];
+
+  while (i < lines.length) {
+    const line: string | undefined = lines[i]?.trim()
+
+    if (!line || line.startsWith("step") || line.startsWith("protocol")) {
+      break; // End of define block
+    }
+
+    const tokens: Token[] = tokenize(line);
+    const def: Definition = parseDefinition(tokens);
+    definitions.push(def);
+    i++
+  }
+  return [definitions, i++];
+}
+
+function parseDefinition(tokens: Token[]): Definition {
+  let i: number = 0;
+  let definition: Definition = {role: "", symbols: []};
+
+  // Expect: VARIABLE("generator")
+  if (tokens[i]?.type !== "VAR") {
+    throw new Error("Expected role name");
+  }
+  definition.role = tokens[i]!.value;
+  i++;
+
+  // Expect: KEYWORD("elem")
+  if (tokens[i]?.type !== "KEYWORD" || tokens[i]?.value !== "elem") {
+    throw new Error("Expected \\elem");
+  }
+  i++;
+
+  // Expect: LBRACE
+  if (tokens[i]?.type !== "LBRACE") {
+    throw new Error("Expected {");
+  }
+  i++;
+
+  // Collect options until RBRACE
+  while (tokens[i] && tokens[i]?.type !== "RBRACE") {
+    if (tokens[i]?.type === "VAR") {
+      definition.symbols.push(tokens[i]!.value);
+    }
+    i++;
+  }
+
+  return definition;
 }
 
 function stepParse(lines: string[], startIndex: number): [Step, number] {
