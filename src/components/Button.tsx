@@ -2,7 +2,7 @@
 
 import { type ButtonHTMLAttributes } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "option" | "submit";
+type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "option" | "submit" | "definition";
 type ButtonSize = "none" | "sm" | "md" | "lg";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -19,6 +19,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   ghost: "bg-transparent text-cream hover:bg-white/10",
   option: "hover:brightness-90 transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-103",
   submit: "bg-green text-green-foreground transition ease-in-out delay-100 duration-300 hover:scale-105",
+  definition: "bg-dark hover:brightness-90 transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
