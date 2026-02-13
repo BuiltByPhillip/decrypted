@@ -1,4 +1,4 @@
-type Code = {
+export type Code = {
   information: Information;
   step: Step[];
 }
@@ -9,9 +9,11 @@ type Information = {
   definition: Definition[];
 }
 
-type Definition = {
-  role: string; // "generator", "prime", etc.
-  symbols: Expr[]; // [g, x, a, b]
+export type Definition = {
+  // Example: "generator", "prime", etc.
+  role: string;
+  // Example: [g, x, a, b] etc.
+  symbols: Expr[];
 }
 
 type Step = {
@@ -28,7 +30,7 @@ type Exercise = {
   answer: Expr[];
 }
 
-type Expr =
+export type Expr =
   | { kind: "var"; name: string }
   | { kind: "role"; name: string }
   | { kind: "int"; value: number}

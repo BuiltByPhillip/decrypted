@@ -1,6 +1,7 @@
 "use client"
 
 import Button from "~/components/Button";
+import type { Expr } from "~/app/hooks/parser"
 import { useState, type ReactNode } from "react";
 
 type DefinitionListProps = {
@@ -18,7 +19,7 @@ export function DefinitionList({children}: DefinitionListProps) {
 
 type DefinitionProps = {
   name: string;
-  choices: string[];
+  choices: Expr[];
 }
 
 // Uses display:contents so children participate in parent grid
@@ -37,21 +38,31 @@ export default function Definition({choices, name}: DefinitionProps) {
   return (
     <div className="contents">
       {/* Column 1: name, right-aligned */}
-      <span className="text-xl font-bold text-right pr-2 bg-gradient-to-r from-cream to-light bg-clip-text text-transparent">{name}</span>
+      <span className="text-xl font-bold text-right pr-2 text-white">{name}</span>
       {/* Column 2: element-of sign */}
-      <span className="text-xl font-bold pr-4 bg-gradient-to-r from-cream to-light bg-clip-text text-transparent">{elementOf}</span>
+      <span className="text-xl font-bold pr-4 text-white">{elementOf}</span>
       {/* Column 3: buttons */}
       <div className="flex items-center">
-        {choices.map(choice => (
-          <Button
-            key={choice}
-            variant={"definition"}
-            className={`w-15 h-15 mr-4 ${selected === choice ? "bg-green text-green-foreground -translate-y-1 scale-105" : "text-muted"}`}
-            onClick={() => {select(choice)}}
-          >
-            {choice}
-          </Button>
-        ))}
+        {choices.map(choice => {
+          if (choice.kind === "var") {
+            return (
+              <Button
+                key={choice.name}
+                variant={"definition"}
+                className={`mr-4 h-15 w-15
+                ${selected === choice.name ? "bg-green text-green-foreground -translate-y-1 scale-105" : "text-muted border border-muted"}
+                ${selected !== "" && selected !== choice.name ? "opacity-50" : ""}
+                `}
+                onClick={() => {
+                  select(choice.name);
+                }}
+              >
+                {choice.name}
+              </Button>
+            );
+          }
+          return null;
+        })}
       </div>
     </div>
   );

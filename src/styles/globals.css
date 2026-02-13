@@ -38,3 +38,33 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: #DFD0B8;
 }
+
+.bg-pattern {
+  background-color: #121212;
+  background-image: url("/topography.svg");
+}
+
+.logo-shimmer {
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #9ca3af 25%,
+    #ffffff 50%,
+    #9ca3af 75%,
+    #ffffff 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 25s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}

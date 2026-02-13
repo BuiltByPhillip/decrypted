@@ -22,9 +22,9 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body>
         <header className="fixed top-0 w-full px-4 py-3 lg:px-8 xl:pg-32 lg:py-4 z-[60] pointer-events-none">
-          <div className="flex items-center justify-between w-full py-4 px-4">
-            <a href="/public" className="z-10 pointer-events-none">
-              <span className="text-light font-geist-mono font-extrabold text-2xl lg:text-3xl uppercase text-foreground tracking-wide">
+          <div className="flex items-center justify-center w-full py-4 px-4">
+            <a href="/" className="z-10 pointer-events-auto">
+              <span className="logo-shimmer font-extrabold text-3xl lg:text-4xl uppercase tracking-wide">
                 decrypted
               </span>
             </a>

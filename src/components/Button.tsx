@@ -1,6 +1,7 @@
 "use client";
 
 import { type ButtonHTMLAttributes } from "react";
+import { twMerge } from "tailwind-merge";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "option" | "submit" | "definition";
 type ButtonSize = "none" | "sm" | "md" | "lg";
@@ -40,15 +41,14 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`
-        ${variantStyles[variant]}
-        ${sizeStyles[size]}
-        ${fullWidth ? "w-full" : ""}
-        ${variant === "option" ? (selected ? "bg-amber text-amber-foreground" : "bg-dark text-muted") : ""}  
-        rounded-2xl font-medium transition-all hover:cursor-pointer
-        disabled:opacity-50 disabled:cursor-not-allowed text-center
-        ${className}
-      `}
+      className={twMerge(
+        variantStyles[variant],
+        sizeStyles[size],
+        fullWidth ? "w-full" : "",
+        variant === "option" ? (selected ? "bg-amber text-amber-foreground" : "bg-dark text-muted") : "",
+        "rounded-2xl font-medium transition-all hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-center",
+        className
+      )}
       {...props}
     >
       {children}
