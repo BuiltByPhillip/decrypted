@@ -4,6 +4,7 @@ import Option from "~/app/_components/exercises/selectExercise/option"
 import Button from "~/components/Button";
 import Hint from "~/app/_components/exercises/selectExercise/hint";
 import { useState } from "react";
+import type { Expr } from "~/app/hooks/parser"
 
 type SelectExerciseProps = {
   numberOfOptions: number;
@@ -11,7 +12,7 @@ type SelectExerciseProps = {
   description: string;
   prompt: string;
   hint?: string;
-  answers: string[];
+  answers: Expr[];
 }
 
 export default function SelectExercise({numberOfOptions, options, description, prompt, hint, answers}: SelectExerciseProps) {
@@ -53,7 +54,7 @@ export default function SelectExercise({numberOfOptions, options, description, p
 
       <div className="relative flex justify-center w-full">
         {/* Answer button */}
-        <Button variant="submit" className="w-100 py-3 font-bold hover:shadow-[0_0_5px_theme(colors.green)]">Answer</Button>
+        <Button variant="submit" className="w-100 py-3 font-bold">Answer</Button>
 
         {/* Hint button - conditionally rendered, positioned to the right */}
         {hint && (

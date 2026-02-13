@@ -5,6 +5,10 @@ html.lenis, html.lenis body {
   height: auto;
 }
 
+html, body {
+  background-color: #121212;
+}
+
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
