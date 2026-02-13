@@ -5,6 +5,7 @@ import { EditorView } from "@codemirror/view";
 import { useState } from "react";
 import { parse } from "~/app/hooks/parser"
 import { useRouter } from "next/navigation";
+import Button from "~/components/Button";
 
 export default function Home() {
   const router = useRouter();
@@ -22,12 +23,17 @@ export default function Home() {
     "&": {
       backgroundColor: "rgba(34, 40, 49, 0.7) !important",
       color: "#94a3b8 !important",
+      fontSize: "13px",
     },
     ".cm-content": {
       padding: "16px",
       paddingLeft: "0",
-      caretColor: "#94a3b8",
+      caretColor: "#60a5fa",
       color: "#94a3b8 !important",
+    },
+    ".cm-cursor": {
+      borderLeftColor: "#60a5fa",
+      borderLeftWidth: "2px",
     },
     ".cm-focused": {
       outline: "none",
@@ -99,7 +105,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-pattern text-cream">
       <div className="flex flex-col items-center">
-        <div className="w-200 h-128 rounded-2xl overflow-hidden">
+        <div className="w-200 h-128 rounded-2xl overflow-hidden" data-lenis-prevent>
           <CodeMirror
             height="518px"
             value={code}
@@ -110,12 +116,13 @@ export default function Home() {
             className="h-full"
           />
         </div>
-        <button
-          className="bg-cream rounded-md text-medium px-3 py-1 hover:opacity-70 hover:cursor-pointer mt-10"
+        <Button
+          className="bg-dark rounded-md text-muted px-3 py-1 transition duration-300 hover:cursor-pointer mt-10 border-2 border-muted-foreground hover:border-muted"
+          size="lg"
           onClick={() => handleClick()}
         >
           Generate Code
-        </button>
+        </Button>
       </div>
     </main>
   );
