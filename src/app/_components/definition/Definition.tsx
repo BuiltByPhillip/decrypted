@@ -38,9 +38,9 @@ export default function Definition({choices, name}: DefinitionProps) {
   return (
     <div className="contents">
       {/* Column 1: name, right-aligned */}
-      <span className="text-xl font-bold text-right pr-2 text-white">{name}</span>
+      <span className="text-xl font-bold text-left pr-2 text-gray">{name}</span>
       {/* Column 2: element-of sign */}
-      <span className="text-xl font-bold pr-4 text-white">{elementOf}</span>
+      <span className="text-xl font-bold pr-4 text-gray">{elementOf}</span>
       {/* Column 3: buttons */}
       <div className="flex items-center">
         {choices.map(choice => {

@@ -28,22 +28,22 @@ export default function SelectExercise({numberOfOptions, options, description, p
 
       <div className="flex flex-col items-center p-8 gap-3">
         {/* Description */}
-        <span className="text-4xl font-bold bg-gradient-to-r from-cream to-light bg-clip-text text-transparent">
+        <span className="text-4xl font-bold bg-gradient-to-r text-gray">
           {description}
         </span>
 
         {/* Prompt*/}
-        <span className="text-xl text-cream/70">{prompt}</span>
+        <span className="text-xl text-gray/70">{prompt}</span>
       </div>
 
       {/* Multiple-choice option buttons */}
-      <div className="grid w-full grid-cols-2 gap-4 pb-10">
+      <div className="grid w-full grid-cols-2 gap-4 pb-10 px-20">
         {Array(numberOfOptions)
           .fill(true)
           .map((_, i) => (
             <Option
               key={i}
-              className="h-20 w-full"
+              className={`h-20 w-full ${selected.includes(i) ? "bg-amber text-amber-foreground" : "text-muted border bg-dark border-muted"} hover:border-amber`}
               text={options[i]!}
               onClick={() => handleSelect(i)}
               selected={selected.includes(i)}
@@ -53,7 +53,7 @@ export default function SelectExercise({numberOfOptions, options, description, p
 
       <div className="relative flex justify-center w-full">
         {/* Answer button */}
-        <Button variant="submit" className="w-100 py-3">Answer</Button>
+        <Button variant="submit" className="w-100 py-3 font-bold hover:shadow-[0_0_5px_theme(colors.green)]">Answer</Button>
 
         {/* Hint button - conditionally rendered, positioned to the right */}
         {hint && (

@@ -31,6 +31,8 @@ html.lenis, html.lenis body {
   --color-amber-foreground: #451a03;
   --color-muted: #94a3b8;
   --color-muted-foreground: #1e293b;
+  --color-soft-white: #fafafa;
+  --color-gray: #9ca3af;
 }
 
 .custom-scrollbar {

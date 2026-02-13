@@ -105,7 +105,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-pattern text-cream">
       <div className="flex flex-col items-center">
-        <div className="w-200 h-128 rounded-2xl overflow-hidden" data-lenis-prevent>
+        <div className="w-240 h-128 rounded-2xl overflow-hidden" data-lenis-prevent>
           <CodeMirror
             height="518px"
             value={code}
@@ -117,11 +117,11 @@ export default function Home() {
           />
         </div>
         <Button
-          className="bg-dark rounded-md text-muted px-3 py-1 transition duration-300 hover:cursor-pointer mt-10 border-2 border-muted-foreground hover:border-muted"
+          className="bg-dark rounded-xl text-soft-white hover:shadow-[0_0_10px_theme(colors.muted)] px-3 py-1 transition duration-300 opacity-70 hover:cursor-pointer mt-10 border-2 border-medium hover:border-muted"
           size="lg"
           onClick={() => handleClick()}
         >
-          Generate Code
+          Generate code
         </Button>
       </div>
     </main>
