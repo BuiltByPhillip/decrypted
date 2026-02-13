@@ -28,7 +28,7 @@ export default function SelectExercise({numberOfOptions, options, description, p
 
       <div className="flex flex-col items-center p-8 gap-3">
         {/* Description */}
-        <span className="text-4xl font-bold bg-gradient-to-r text-gray">
+        <span className="text-4xl font-bold text-gray">
           {description}
         </span>
 
@@ -43,7 +43,7 @@ export default function SelectExercise({numberOfOptions, options, description, p
           .map((_, i) => (
             <Option
               key={i}
-              className={`h-20 w-full ${selected.includes(i) ? "bg-amber text-amber-foreground" : "text-muted border bg-dark border-muted"} hover:border-amber`}
+              className={`h-20 w-full ${selected.includes(i) ? "bg-amber text-amber-foreground" : "text-muted border bg-dark border-muted opacity-70"} hover:border-amber`}
               text={options[i]!}
               onClick={() => handleSelect(i)}
               selected={selected.includes(i)}

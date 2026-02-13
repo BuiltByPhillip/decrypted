@@ -19,7 +19,7 @@ export default function ExercisePage() {
   }
   return (
     <main className="bg-pattern relative flex min-h-screen flex-col items-center justify-center">
-      <span className="absolute top-30 text-white uppercase text-xl font-medium tracking-wider">define symbols for exercises</span>
+      <span className="absolute top-30 text-gray uppercase text-xl font-medium tracking-wider">define symbols for exercises</span>
       <DefinitionsPicker definitions={code.information.definition} />
     </main>
   );
