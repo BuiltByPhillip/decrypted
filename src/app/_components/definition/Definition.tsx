@@ -20,14 +20,16 @@ export function DefinitionList({children}: DefinitionListProps) {
 type DefinitionProps = {
   name: string;
   choices: Expr[];
+  onChange: (role: string, symbol: Expr) => void;
 }
 
 // Uses display:contents so children participate in parent grid
-export default function Definition({choices, name}: DefinitionProps) {
+export default function Definition({ choices, name, onChange }: DefinitionProps) {
   let [selected, setSelected] = useState<string>("");
   const elementOf = "\u2208";
 
   const select = (choice: string) => {
+    // Un-select current selected definition
     if (selected === choice) {
       setSelected("");
       return
@@ -55,6 +57,7 @@ export default function Definition({choices, name}: DefinitionProps) {
                 `}
                 onClick={() => {
                   select(choice.name);
+                  onChange(name, choice.name)
                 }}
               >
                 {choice.name}
