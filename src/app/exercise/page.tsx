@@ -25,19 +25,26 @@ export default function ExercisePage() {
     setDefinitions({ ...definitions, [role]: symbol });
   }
 
-  const isFullyDefined = () => {
-    
+  const isFullyDefined = (): boolean => {
+    if (!code) {
+      return false;
+    }
+    return code.information.definition.length === Object.keys(definitions).length;
   }
 
   if (!code) {
     return <div>Loading...</div>;
   }
   return (
-    <main className="bg-pattern relative flex min-h-screen flex-col items-center pt-40 pb-20" data-lenis-prevent>
-
+    <main
+      className="bg-pattern relative flex min-h-screen flex-col items-center justify-center pt-40 pb-20"
+      data-lenis-prevent
+    >
       {/* Definition selection */}
-      <div className="flex items-center justify-center flex-col">
-        <span className="pb-5 text-gray uppercase text-xl font-medium tracking-wider">define symbols for exercises</span>
+      <div className="flex flex-col items-center justify-center">
+        <span className="text-gray pb-5 text-xl font-medium tracking-wider uppercase">
+          define symbols for exercises
+        </span>
         <DefinitionsPicker
           definitions={code.information.definition}
           onSelect={updateDefinitions}
@@ -45,13 +52,20 @@ export default function ExercisePage() {
         />
         <Button
           variant="submit"
-          className="m-10 w-50"
-          onClick={() => setShowExercises(true)}>Continue</Button>
+          className={`m-10 w-50 transition delay-150 ${!isFullyDefined() ? `pointer-events-none opacity-50` : `opacity-100`}`}
+          onClick={() => setShowExercises(true)}
+        >
+          Continue
+        </Button>
       </div>
 
-
+      {/* Each exercise/step */}
       {code.step.map((step, i) => {
-        if (step.exercise?.type === "select" && step.exercise.options && showExercises) {
+        if (
+          step.exercise?.type === "select" &&
+          step.exercise.options &&
+          showExercises
+        ) {
           return (
             <SelectExercise
               key={i}
@@ -59,12 +73,11 @@ export default function ExercisePage() {
               options={step.exercise.options}
               description={step.description}
               prompt={step.exercise.prompt}
-              answers={step.exercise.answer}/>
+              answers={step.exercise.answer}
+            />
           );
-
         }
       })}
-
     </main>
   );
 }
