@@ -5,6 +5,7 @@ import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import SmoothScroll from "~/components/SmoothScroll";
+import Logo from "~/app/_components/logo";
 
 export const metadata: Metadata = {
   title: "Decrypted",
@@ -25,14 +26,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`}>
       <body>
-        <header className="absolute top-0 left-0 w-full px-4 py-3 lg:px-8 xl:pg-32 lg:py-4 z-10">
-          <div className="flex items-center justify-center w-full py-4 px-4">
-            <a href="/" className="z-10 pointer-events-auto">
-              <span className="logo-shimmer font-extrabold text-3xl lg:text-4xl uppercase tracking-wide">
+        <header className="absolute top-0 left-0 z-10 flex w-full items-center px-4 py-3 lg:px-8 lg:py-4 xl:px-32">
+          {/*<Logo className="h-30 w-30 shrink-0" /> */}
+          <div className="flex flex-1 justify-center">
+            <a href="/" className="pointer-events-auto z-10">
+              <span className="logo-shimmer text-3xl font-extrabold tracking-wide uppercase lg:text-4xl">
                 decrypted
               </span>
             </a>
           </div>
+          <div className="w-12 shrink-0" />
         </header>
         <SmoothScroll>
           <TRPCReactProvider>{children}</TRPCReactProvider>
