@@ -21,8 +21,13 @@ export default function ExercisePage() {
     }
   }, []);
 
-  const updateDefinitions = (s: SelectedDefinitions) => {
-    setDefinitions(s);
+  const updateDefinitions = (role: string, symbol: Expr | null) => {
+    if (symbol === null) {
+      const { [role]: _, ...rest } = definitions; // Removes the key
+      setDefinitions(rest);
+    } else {
+      setDefinitions({ ...definitions, [role]: symbol });
+    }
   }
 
   if (!code) {
@@ -36,7 +41,8 @@ export default function ExercisePage() {
         <span className="pb-5 text-gray uppercase text-xl font-medium tracking-wider">define symbols for exercises</span>
         <DefinitionsPicker
           definitions={code.information.definition}
-          selectedDefinitions={updateDefinitions}
+          onSelect={updateDefinitions}
+          selected={definitions}
         />
         <Button
           variant="submit"

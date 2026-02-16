@@ -1,8 +1,6 @@
-"use client"
-
 import Button from "~/components/Button";
 import type { Expr } from "~/app/hooks/parser"
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
 type DefinitionListProps = {
   children: ReactNode;
@@ -20,22 +18,14 @@ export function DefinitionList({children}: DefinitionListProps) {
 type DefinitionProps = {
   name: string;
   choices: Expr[];
-  onChange: (role: string, symbol: Expr) => void;
+  onChange: (role: string, symbol: Expr | null) => void;
+  selected?: Expr;
 }
 
 // Uses display:contents so children participate in parent grid
-export default function Definition({ choices, name, onChange }: DefinitionProps) {
-  let [selected, setSelected] = useState<string>("");
+export default function Definition({ choices, name, onChange, selected }: DefinitionProps) {
   const elementOf = "\u2208";
-
-  const select = (choice: string) => {
-    // Un-select current selected definition
-    if (selected === choice) {
-      setSelected("");
-      return
-    }
-    setSelected(choice);
-  }
+  const selectedName = selected?.kind === "var" ? selected.name : undefined;
 
   return (
     <div className="contents">
@@ -47,18 +37,16 @@ export default function Definition({ choices, name, onChange }: DefinitionProps)
       <div className="flex items-center">
         {choices.map(choice => {
           if (choice.kind === "var") {
+            const isSelected: boolean = selectedName === choice.name;
             return (
               <Button
                 key={choice.name}
                 variant={"definition"}
                 className={`mr-4 h-15 w-15
-                ${selected === choice.name ? "bg-green text-green-foreground -translate-y-1 scale-105" : "text-muted border border-muted"}
-                ${selected !== "" && selected !== choice.name ? "opacity-50" : ""}
+                ${isSelected ? "bg-green text-green-foreground -translate-y-1 scale-105" : "text-muted border border-muted"}
+                ${selectedName && !isSelected ? "opacity-50" : ""}
                 `}
-                onClick={() => {
-                  select(choice.name);
-                  onChange(name, choice.name)
-                }}
+                onClick={() => onChange(name, isSelected ? null : choice)}
               >
                 {choice.name}
               </Button>

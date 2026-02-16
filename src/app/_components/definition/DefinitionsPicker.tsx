@@ -1,21 +1,14 @@
 import Definition, { DefinitionList } from "~/app/_components/definition/Definition";
 import type { Definition as DefinitionType, Expr } from "~/app/hooks/parser";
 import type { SelectedDefinitions } from "~/app/exercise/page";
-import { useState } from "react";
 
 type DefinitionProps = {
   definitions: DefinitionType[];
-  selectedDefinitions: (s: SelectedDefinitions) => void;
+  onSelect: (role: string, symbol: Expr | null) => void;
+  selected: SelectedDefinitions;
 }
 
-export default function DefinitionsPicker({ definitions, selectedDefinitions }: DefinitionProps) {
-  const [selected, setSelected] = useState<SelectedDefinitions>({});
-
-  const updateDefinitions = (role: string, symbol: Expr) => {
-    setSelected((prev) => ({ ...prev, [role]: symbol }));
-    selectedDefinitions(selected);
-  }
-
+export default function DefinitionsPicker({ definitions, onSelect, selected }: DefinitionProps) {
 
     return (
     <DefinitionList>
@@ -24,7 +17,8 @@ export default function DefinitionsPicker({ definitions, selectedDefinitions }: 
           key={i}
           name={definition.role}
           choices={definition.symbols}
-          onChange={updateDefinitions}
+          onChange={onSelect}
+          selected={selected[definition.role]}
         />
       ))}
     </DefinitionList>
