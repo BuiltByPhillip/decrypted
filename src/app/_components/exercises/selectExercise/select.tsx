@@ -5,7 +5,7 @@ import Button from "~/components/Button";
 import Hint from "~/app/_components/exercises/selectExercise/hint";
 import { useState } from "react";
 import type { Expr } from "~/app/hooks/parser"
-import { substituteRoles } from "~/app/hooks/expr";
+import { exprListContains, substituteRoles } from "~/app/hooks/expr";
 import type { SelectedDefinitions } from "~/app/exercise/page";
 
 type SelectExerciseProps = {
@@ -18,9 +18,16 @@ type SelectExerciseProps = {
 }
 
 export default function SelectExercise({options, description, prompt, hint, definitions, answers}: SelectExerciseProps) {
-  console.log("options:", options);
-  console.log("definitions:", definitions);
   const [selected, setSelected] = useState<number[]>([]);
+  const [correct, setCorrect] = useState<boolean>(false);
+
+  const checkAnswer = () => {
+    const selectedExprs: Expr[] = selected.map(i => options[i] as Expr);
+
+      setCorrect(selectedExprs.every(expr => exprListContains(expr, answers)) &&
+      answers.every(expr => exprListContains(expr, selectedExprs)))
+
+  }
 
   const handleSelect = (index: number) => {
     selected.includes(index)
@@ -55,7 +62,13 @@ export default function SelectExercise({options, description, prompt, hint, defi
 
       <div className="relative flex justify-center w-full">
         {/* Answer button */}
-        <Button variant="submit" className="w-100 py-3">Answer</Button>
+        <Button
+          variant="submit"
+          className="w-100 py-3"
+          onClick={() => checkAnswer()}
+        >
+          Answer
+        </Button>
 
         {/* Hint button - conditionally rendered, positioned to the right */}
         {hint && (

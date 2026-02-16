@@ -114,3 +114,10 @@ export function exprToString(e: Expr): string {
       return `${exprToString(e.left)} or ${exprToString(e.right)}`;
   }
 }
+
+export function exprListContains(expr: Expr, list: Expr[]): boolean {
+  for (let i = 0; i < list.length; i++) {
+    if (exprEquals(expr, list[i]!)) return true;
+  }
+  return false;
+}
