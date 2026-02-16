@@ -40,7 +40,7 @@ export default function ExercisePage() {
     lenis.resize();
 
     lenis.scrollTo(element, {
-      duration: 1.2,
+      duration: 2,
     });
   }, [lenis]);
 
@@ -60,11 +60,10 @@ export default function ExercisePage() {
     });
   }, [showExercises, lenis, scrollToExercise]);
 
-  // Handle finishing all exercises
-  const handleFinish = useCallback(() => {
+  const handleFinish = () => {
     // TODO: Navigate to results page or handle completion
     console.log("Exercises completed!");
-  }, []);
+  };
 
   const setExerciseRef = useCallback((index: number, el: HTMLDivElement | null) => {
     if (el) {
@@ -126,7 +125,7 @@ export default function ExercisePage() {
           <div
             key={stepIndex}
             ref={(el) => setExerciseRef(exerciseIndex, el)}
-            className="flex min-h-screen flex-col items-center justify-center gap-8"
+            className="flex min-h-screen flex-col items-center justify-center gap-8 w-full"
           >
             <SelectExercise
               options={step.exercise!.options!}
