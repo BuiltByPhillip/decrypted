@@ -79,3 +79,38 @@ export function exprEquals(a: Expr, b: Expr): boolean {
       );
   }
 }
+
+export function exprToString(e: Expr): string {
+  switch (e.kind) {
+    case "var":
+      return e.name;
+    case "role":
+      return `{${e.name}}`;  // shouldn't appear after substitution
+    case "int":
+      return String(e.value);
+    case "placeholder":
+      return `$${e.index}`;
+    case "pow":
+      return `${exprToString(e.base)}^${exprToString(e.exp)}`;
+    case "mod":
+      return `${exprToString(e.left)} mod ${exprToString(e.right)}`;
+    case "mul":
+      return `${exprToString(e.left)} * ${exprToString(e.right)}`;
+    case "div":
+      return `${exprToString(e.left)} / ${exprToString(e.right)}`;
+    case "add":
+      return `${exprToString(e.left)} + ${exprToString(e.right)}`;
+    case "sub":
+      return `${exprToString(e.left)} - ${exprToString(e.right)}`;
+    case "less":
+      return `${exprToString(e.left)} < ${exprToString(e.right)}`;
+    case "greater":
+      return `${exprToString(e.left)} > ${exprToString(e.right)}`;
+    case "equal":
+      return `${exprToString(e.left)} = ${exprToString(e.right)}`;
+    case "and":
+      return `${exprToString(e.left)} and ${exprToString(e.right)}`;
+    case "or":
+      return `${exprToString(e.left)} or ${exprToString(e.right)}`;
+  }
+}

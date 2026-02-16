@@ -5,17 +5,21 @@ import Button from "~/components/Button";
 import Hint from "~/app/_components/exercises/selectExercise/hint";
 import { useState } from "react";
 import type { Expr } from "~/app/hooks/parser"
+import { substituteRoles } from "~/app/hooks/expr";
+import type { SelectedDefinitions } from "~/app/exercise/page";
 
 type SelectExerciseProps = {
-  numberOfOptions: number;
-  options: string[];
+  options: Expr[];
   description: string;
   prompt: string;
   hint?: string;
+  definitions?: SelectedDefinitions;
   answers: Expr[];
 }
 
-export default function SelectExercise({numberOfOptions, options, description, prompt, hint, answers}: SelectExerciseProps) {
+export default function SelectExercise({options, description, prompt, hint, definitions, answers}: SelectExerciseProps) {
+  console.log("options:", options);
+  console.log("definitions:", definitions);
   const [selected, setSelected] = useState<number[]>([]);
 
   const handleSelect = (index: number) => {
@@ -39,17 +43,14 @@ export default function SelectExercise({numberOfOptions, options, description, p
 
       {/* Multiple-choice option buttons */}
       <div className="grid w-full grid-cols-2 gap-4 pb-10 px-20">
-        {Array(numberOfOptions)
-          .fill(true)
-          .map((_, i) => (
-            <Option
-              key={i}
-              className={`h-20 w-full ${selected.includes(i) ? "bg-amber text-amber-foreground" : "text-muted border bg-dark border-muted opacity-70"} hover:border-amber`}
-              text={options[i]!}
-              onClick={() => handleSelect(i)}
-              selected={selected.includes(i)}
-            />
-          ))}
+        {options.map((option, i) => (
+          <Option
+            key={i}
+            className={`h-20 w-full ${selected.includes(i) ? "bg-amber text-amber-foreground" : "text-muted border bg-dark border-muted opacity-70"} hover:border-amber`}
+            text={substituteRoles(option, definitions!)}
+            onClick={() => handleSelect(i)}
+          />
+        ))}
       </div>
 
       <div className="relative flex justify-center w-full">

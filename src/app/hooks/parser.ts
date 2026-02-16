@@ -26,7 +26,7 @@ type Exercise = {
   prompt: string;
   hint?: string;
   palette?: PaletteItem[];
-  options?: string[];
+  options?: Expr[];
   answer: Expr[];
 }
 
@@ -499,11 +499,15 @@ function exerciseParse(lines: string[], startIndex: number): [Exercise, number] 
     }
     else if (line.startsWith("options:")) {
       const [options, nextI] = optionsParse(lines, i+1)
-      i = nextI
       if (options.length == 0) {
         throw new Error(`Line ${i} - No options for exercise type select`);
       }
-      pendingExercise.options = options;
+      pendingExercise.options = options.map(opt => {
+        const tokens = tokenize(opt);
+        const parser = new ExpressionParser(tokens);
+        return parser.parse()
+      });
+      i = nextI
       continue
     }
     else if (line.startsWith("answer:")) {
