@@ -21,13 +21,12 @@ export default function ExercisePage() {
     }
   }, []);
 
-  const updateDefinitions = (role: string, symbol: Expr | null) => {
-    if (symbol === null) {
-      const { [role]: _, ...rest } = definitions; // Removes the key
-      setDefinitions(rest);
-    } else {
-      setDefinitions({ ...definitions, [role]: symbol });
-    }
+  const updateDefinitions = (role: string, symbol: Expr) => {
+    setDefinitions({ ...definitions, [role]: symbol });
+  }
+
+  const isFullyDefined = () => {
+    
   }
 
   if (!code) {

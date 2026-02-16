@@ -18,7 +18,7 @@ export function DefinitionList({children}: DefinitionListProps) {
 type DefinitionProps = {
   name: string;
   choices: Expr[];
-  onChange: (role: string, symbol: Expr | null) => void;
+  onChange: (role: string, symbol: Expr) => void;
   selected?: Expr;
 }
 
@@ -46,7 +46,7 @@ export default function Definition({ choices, name, onChange, selected }: Defini
                 ${isSelected ? "bg-green text-green-foreground -translate-y-1 scale-105" : "text-muted border border-muted"}
                 ${selectedName && !isSelected ? "opacity-50" : ""}
                 `}
-                onClick={() => onChange(name, isSelected ? null : choice)}
+                onClick={() => onChange(name, choice)}
               >
                 {choice.name}
               </Button>

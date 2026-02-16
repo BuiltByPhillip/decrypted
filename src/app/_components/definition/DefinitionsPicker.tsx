@@ -4,7 +4,7 @@ import type { SelectedDefinitions } from "~/app/exercise/page";
 
 type DefinitionProps = {
   definitions: DefinitionType[];
-  onSelect: (role: string, symbol: Expr | null) => void;
+  onSelect: (role: string, symbol: Expr) => void;
   selected: SelectedDefinitions;
 }
 
