@@ -9,6 +9,9 @@ import SmoothScroll from "~/components/SmoothScroll";
 export const metadata: Metadata = {
   title: "Decrypted",
   description: "A cryptographic protocol exercise generator",
+  icons: {
+    icon: "/Logo Decrypted.svg",
+  },
 };
 
 const geist = Geist({
