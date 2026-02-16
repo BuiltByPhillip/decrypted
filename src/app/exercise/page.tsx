@@ -109,8 +109,12 @@ export default function ExercisePage() {
           variant="submit"
           className={`m-10 w-50 transition delay-150 ${!isFullyDefined() ? "pointer-events-none opacity-50" : "opacity-100"}`}
           onClick={() => {
-            shouldScrollToFirst.current = true;
-            setShowExercises(true);
+            if (showExercises) {
+              scrollToExercise(0);
+            } else {
+              shouldScrollToFirst.current = true;
+              setShowExercises(true);
+            }
           }}
         >
           Continue
