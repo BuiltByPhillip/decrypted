@@ -19,13 +19,11 @@ type SelectExerciseProps = {
 
 export default function SelectExercise({options, description, prompt, hint, definitions, answers}: SelectExerciseProps) {
   const [selected, setSelected] = useState<number[]>([]);
-  const [correct, setCorrect] = useState<boolean>(false);
 
   const checkAnswer = () => {
     const selectedExprs: Expr[] = selected.map(i => options[i] as Expr);
 
-      setCorrect(selectedExprs.every(expr => exprListContains(expr, answers)) &&
-      answers.every(expr => exprListContains(expr, selectedExprs)))
+    selectedExprs.every(expr => exprListContains(expr, answers))
 
   }
 
@@ -53,7 +51,7 @@ export default function SelectExercise({options, description, prompt, hint, defi
         {options.map((option, i) => (
           <Option
             key={i}
-            className={`h-20 w-full ${selected.includes(i) ? "bg-amber text-amber-foreground" : "text-muted border bg-dark border-muted opacity-70"} hover:border-amber`}
+            className={`h-20 w-full hover:border-amber ${selected.includes(i) ? "bg-amber text-amber-foreground" : "text-muted border bg-dark border-muted opacity-70"}`}
             text={substituteRoles(option, definitions!)}
             onClick={() => handleSelect(i)}
           />

@@ -1,6 +1,6 @@
 "use client";
 
-import { type ButtonHTMLAttributes } from "react";
+import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "option" | "submit" | "definition";
@@ -29,26 +29,26 @@ const sizeStyles: Record<ButtonSize, string> = {
   lg: "px-6 py-3 text-lg",
 };
 
-export default function Button({
-  variant = "primary",
-  size = "md",
-  fullWidth = false,
-  className = "",
-  children,
-  ...props
-}: ButtonProps) {
-  return (
-    <button
-      className={twMerge(
-        variantStyles[variant],
-        sizeStyles[size],
-        fullWidth ? "w-full" : "",
-        "rounded-2xl font-medium transition-all hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-center",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-}
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant = "primary", size = "md", fullWidth = false, className = "", children, ...props }, ref) => {
+    return (
+      <button
+        ref={ref}
+        className={twMerge(
+          variantStyles[variant],
+          sizeStyles[size],
+          fullWidth ? "w-full" : "",
+          "rounded-2xl font-medium transition-all hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-center",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+
+Button.displayName = "Button";
+
+export default Button;
