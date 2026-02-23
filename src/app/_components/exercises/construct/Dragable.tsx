@@ -1,10 +1,12 @@
 import { useRef } from "react";
+import { type Expr } from "~/app/hooks/parser";
 
 type DragableProps = {
+  value: Expr;
   onDrop: (x: number, y: number) =>  DOMRect | null;
 }
 
-export default function Dragable({ onDrop }: DragableProps) {
+export default function Dragable({ value, onDrop }: DragableProps) {
   const posRef = useRef({ newX: 0, newY: 0, startX: 0, startY: 0 });
   const ref = useRef<HTMLDivElement>(null);
 
@@ -36,13 +38,31 @@ export default function Dragable({ onDrop }: DragableProps) {
       ref.current!.style.top = bounds.top + "px";
       ref.current!.style.left = bounds.left + "px";
     }
+
   };
+
+  const renderValue = (value: Expr) => {
+        switch (value.kind) {
+          case "int":
+          return <div>{value.value}</div>;
+          case "var":
+            return <div>{value.name}</div>;
+          case "role":
+            return <div>{value.name}</div>;
+          case "placeholder":
+            return <div>_{value.index}</div>;
+          case "and":
+            return <div>{/* handle left and right */}</div>
+        }
+  }
 
   return (
     <div
       ref={ref}
       onMouseDown={mouseDown}
       className="bg-dark fixed h-50 w-50 cursor-pointer border-2"
-    ></div>
+    >
+      {renderValue(value)}
+    </div>
   );
 }

@@ -24,7 +24,7 @@ export default function DragAndDrop() {
 
   return (
     <div>
-      <Dragable onDrop={checkDrop}/>
+      <Dragable onDrop={checkDrop} value={{ kind: "int", value: 7 }}/>
       <Dropable ref={dropRef}/>
     </div>
 
