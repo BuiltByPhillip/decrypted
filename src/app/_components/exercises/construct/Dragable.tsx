@@ -1,12 +1,12 @@
 import { useRef } from "react";
-import { type Expr } from "~/app/hooks/parser";
+import { operatorSymbol, type PaletteItem } from "~/app/hooks/parser";
 
 type DragableProps = {
-  expr: Expr;
+  paletteItem: PaletteItem;
   onDrop: (x: number, y: number) =>  DOMRect | null;
 }
 
-export default function Dragable({ expr, onDrop }: DragableProps) {
+export default function Dragable({ paletteItem, onDrop }: DragableProps) {
   const posRef = useRef({ newX: 0, newY: 0, startX: 0, startY: 0 });
   const ref = useRef<HTMLDivElement>(null);
 
@@ -41,18 +41,16 @@ export default function Dragable({ expr, onDrop }: DragableProps) {
 
   };
 
-  const renderValue = (value: Expr) => {
-        switch (value.kind) {
+  const renderValue = (item: PaletteItem) => {
+        switch (item.kind) {
           case "int":
-          return <div>{value.value}</div>;
+          return <div>{item.value}</div>;
           case "var":
-            return <div>{value.name}</div>;
+            return <div>{item.name}</div>;
           case "role":
-            return <div>{value.name}</div>;
-          case "placeholder":
-            return <div>_{value.index}</div>;
-          case "and":
-            return <div>{/* handle left and right */}</div>
+            return <div>{item.name}</div>;
+          case "operator":
+            return <div>{item.op}</div>
         }
   }
 
@@ -60,9 +58,10 @@ export default function Dragable({ expr, onDrop }: DragableProps) {
     <div
       ref={ref}
       onMouseDown={mouseDown}
-      className="flex bg-dark fixed h-10 w-10 cursor-pointer border-2 border-muted-foreground justify-center items-center text-soft-white text-2xl"
+      className="flex bg-dark fixed h-10 w-10 cursor-pointer rounded-2xl justify-center items-center text-soft-white text-2xl select-none"
     >
-      {renderValue(expr)}
+      {/* Remember to render the Expr type with the map operatorSymbol inside Parser.ts */}
+      {renderValue(paletteItem)}
     </div>
   );
 }

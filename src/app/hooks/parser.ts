@@ -47,7 +47,7 @@ export type Expr =
   | { kind: "greater"; left: Expr; right: Expr }
   | { kind: "equal"; left: Expr; right: Expr }
 
-type PaletteItem =
+export type PaletteItem =
   | { kind: "var"; name: string }
   | { kind: "role"; name: string }
   | { kind: "int"; value: number }
@@ -568,3 +568,17 @@ function finalizeExercise(fields: Partial<Exercise>, line: number): Exercise {
 function isExerciseType(value: string): value is ExerciseType {
   return (EXERCISE_TYPES as readonly string[]).includes(value);
 }
+
+export const operatorSymbol: Record<string, string> = {
+  mul: "×",
+  div: "÷",
+  add: "+",
+  sub: "−",
+  pow: "^",
+  mod: "mod",
+  and: "∧",
+  or: "∨",
+  less: "<",
+  greater: ">",
+  equal: "=",
+};

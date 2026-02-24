@@ -24,7 +24,7 @@ export default function DragAndDrop() {
 
   return (
     <div className="flex flex-col items-center">
-      <ExprContainer onDrop={checkDrop} expressions={[{kind: "int", value: 7}]}/>
+      <ExprContainer onDrop={checkDrop} paletteItems={[{kind: "operator", op: "div"}, {kind: "operator", op: "mul"}]}/>
       <Dropable ref={dropRef}/>
     </div>
 
