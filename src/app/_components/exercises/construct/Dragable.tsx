@@ -60,7 +60,7 @@ export default function Dragable({ value, onDrop }: DragableProps) {
     <div
       ref={ref}
       onMouseDown={mouseDown}
-      className="bg-dark fixed h-50 w-50 cursor-pointer border-2"
+      className="flex bg-dark fixed h-50 w-50 cursor-pointer border-2 border-muted-foreground justify-center items-center text-soft-white text-2xl"
     >
       {renderValue(value)}
     </div>
