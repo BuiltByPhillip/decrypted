@@ -50,7 +50,7 @@ export default function Dragable({ paletteItem, onDrop }: DragableProps) {
           case "role":
             return <div>{item.name}</div>;
           case "operator":
-            return <div>{item.op}</div>
+            return <div>{operatorSymbol[item.op]}</div>
         }
   }
 
@@ -58,7 +58,7 @@ export default function Dragable({ paletteItem, onDrop }: DragableProps) {
     <div
       ref={ref}
       onMouseDown={mouseDown}
-      className="flex bg-dark fixed h-10 w-10 cursor-pointer rounded-2xl justify-center items-center text-soft-white text-2xl select-none"
+      className="flex bg-dark fixed h-10 w-10 cursor-pointer rounded-2xl justify-center items-center text-muted text-2xl select-none"
     >
       {/* Remember to render the Expr type with the map operatorSymbol inside Parser.ts */}
       {renderValue(paletteItem)}

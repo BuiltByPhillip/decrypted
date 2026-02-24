@@ -571,7 +571,7 @@ function isExerciseType(value: string): value is ExerciseType {
 
 export const operatorSymbol: Record<string, string> = {
   mul: "×",
-  div: "÷",
+  div: "/",
   add: "+",
   sub: "−",
   pow: "^",
