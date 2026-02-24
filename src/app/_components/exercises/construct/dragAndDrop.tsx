@@ -3,9 +3,9 @@
 import { useRef, useState } from "react";
 import Dragable from "~/app/_components/exercises/construct/Dragable";
 import Dropable from "~/app/_components/exercises/construct/Dropable";
+import ExprContainer from "~/app/_components/exercises/construct/ExprContainer";
 
 export default function DragAndDrop() {
-  const [isDropped, setIsDropped] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
 
   const checkDrop = (x:number, y:number) :  DOMRect | null => {
@@ -23,8 +23,8 @@ export default function DragAndDrop() {
   }
 
   return (
-    <div>
-      <Dragable onDrop={checkDrop} value={{ kind: "int", value: 7 }}/>
+    <div className="flex flex-col items-center">
+      <ExprContainer onDrop={checkDrop} expressions={[{kind: "int", value: 7}]}/>
       <Dropable ref={dropRef}/>
     </div>
 
