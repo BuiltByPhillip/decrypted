@@ -5,17 +5,20 @@ type DragGhostProps = {
   paletteItem: PaletteItem;
   startX: number;
   startY: number;
+  offsetX: number;
+  offsetY: number;
   onDrop: (x: number, y: number) => void;
 }
 
-export default function DragGhost({ paletteItem, onDrop, startX, startY }: DragGhostProps) {
+export default function DragGhost({ paletteItem, onDrop, startX, startY, offsetX, offsetY }: DragGhostProps) {
   const ref = useRef<HTMLDivElement>(null);
   const posRef = useRef({ startX, startY });
   const onDropRef = useRef(onDrop);
 
   useEffect(() => {
-    ref.current!.style.left = startX + "px";
-    ref.current!.style.top = startY + "px";
+    // Offset by where the user clicked within the palette item
+    ref.current!.style.left = (startX - offsetX) + "px";
+    ref.current!.style.top = (startY - offsetY) + "px";
 
     const mousemove = (event: MouseEvent) => {
       const deltaX = posRef.current.startX - event.clientX;

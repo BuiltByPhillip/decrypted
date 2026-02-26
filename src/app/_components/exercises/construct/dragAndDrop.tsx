@@ -12,6 +12,8 @@ export default function DragAndDrop() {
     item: PaletteItem;
     x: number;
     y: number;
+    offsetX: number;
+    offsetY: number;
   } | null>(null);
 
   const checkDrop = (x:number, y:number) :  DOMRect | null => {
@@ -28,11 +30,13 @@ export default function DragAndDrop() {
     return isInside ? bounds : null;
   }
 
-  const onStartDrag = (item: PaletteItem, x: number, y: number) => {
+  const onStartDrag = (item: PaletteItem, x: number, y: number, offsetX: number, offsetY: number) => {
     setDragState({
       item: item,
       x: x,
       y: y,
+      offsetX: offsetX,
+      offsetY: offsetY,
     })
   }
 
@@ -48,9 +52,11 @@ export default function DragAndDrop() {
           paletteItem={dragState.item}
           startX={dragState.x}
           startY={dragState.y}
+          offsetX={dragState.offsetX}
+          offsetY={dragState.offsetY}
           onDrop={(x, y) => {
-          setDragState(null)
-        }}
+            setDragState(null)
+          }}
         />
       )}
       <Dropable ref={dropRef}/>
