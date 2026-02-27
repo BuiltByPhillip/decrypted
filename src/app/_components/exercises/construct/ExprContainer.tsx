@@ -3,12 +3,11 @@ import PaletteItem from "~/app/_components/exercises/construct/PaletteItem";
 
 type ContainerProps = {
   paletteItems: Item[]
-  onDrop: (x: number, y: number) =>  DOMRect | null;
   onStartDrag: (item: Item, x: number, y: number, offsetX: number, offsetY: number) => void;
 }
 
 
-export default function ExprContainer({ paletteItems, onDrop, onStartDrag }: ContainerProps) {
+export default function ExprContainer({ paletteItems, onStartDrag }: ContainerProps) {
 
   return (
     <div className="grid grid-cols-13 gap-1 p-2 bg-dark/70 border border-muted w-150 h-40 rounded-2xl overflow-hidden">

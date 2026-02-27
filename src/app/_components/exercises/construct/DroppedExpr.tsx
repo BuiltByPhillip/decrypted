@@ -1,13 +1,13 @@
-import { operatorSymbol, type PaletteItem } from "~/app/hooks/parser";
+import type { PaletteItem } from "~/app/hooks/parser";
 import ExprBlock from "~/app/_components/exercises/construct/ExprBlock";
 
-type PaletteItemProps = {
+type DroppedExprProps = {
   item: PaletteItem;
-  onStartDrag: (item: PaletteItem, x: number, y: number, offsetX: number, offsetY: number) => void;
   className?: string;
+  onStartDrag: (item: PaletteItem, x: number, y: number, offsetX: number, offsetY: number) => void;
 }
 
-export default function PaletteItem({ item, onStartDrag, className }: PaletteItemProps) {
+export default function DroppedExpr({ item, className, onStartDrag }: DroppedExprProps) {
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
