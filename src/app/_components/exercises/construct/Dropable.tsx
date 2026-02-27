@@ -12,7 +12,7 @@ export default forwardRef<HTMLDivElement, DropableProps>(function Dropable(props
   const { className, children } = props;
 
   return (
-    <div ref={ref} className={`w-50 h-50 border-3 border-dotted border-soft-white ${className ?? ''} `}>
+    <div ref={ref} className={`flex flex-row justify-center items-center px-10 min-w-50 min-h-50 border-3 border-dotted border-gray ${className ?? ''} `}>
       {children}
     </div>
   );
